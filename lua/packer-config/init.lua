@@ -1,4 +1,4 @@
-return require('packer').startup(function()
+return require('packer').startup(function(use)
     use 'wbthomason/packer.nvim'
     use 'nvim-tree/nvim-web-devicons'
     use 'EdenEast/nightfox.nvim'
@@ -20,6 +20,13 @@ return require('packer').startup(function()
     use {
         'nvim-telescope/telescope.nvim', tag = '0.1.0',
         requires = { {'nvim-lua/plenary.nvim'} }
+    }
+
+    use {
+        'lewis6991/gitsigns.nvim',
+        config = function()
+            require('gitsigns').setup()
+        end
     }
 
     use 'hrsh7th/nvim-cmp' -- Autocompletion plugin
