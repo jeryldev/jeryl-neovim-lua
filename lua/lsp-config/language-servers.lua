@@ -74,6 +74,7 @@ require'lspconfig'.sumneko_lua.setup {
       },
     },
   },
+  capabilities = capabilities
 }
 
 -- Emmet
@@ -83,10 +84,6 @@ require'lspconfig'.emmet_ls.setup{}
 require'lspconfig'.eslint.setup{}
 
 -- HTML, CSS, JSON
---Enable (broadcasting) snippet capability for completion
-local capabilities = vim.lsp.protocol.make_client_capabilities()
-capabilities.textDocument.completion.completionItem.snippetSupport = true
-
 require'lspconfig'.html.setup {
   capabilities = capabilities,
 }
@@ -99,14 +96,73 @@ require'lspconfig'.jsonls.setup {
   capabilities = capabilities,
 }
 
--- Elixir
+-- Configure Elixir LS
+local homeDir = os.getenv( "HOME" )
+local els_unexpanded_dir = "/elixir-ls/language_server.sh"
+local elixirLS_dir = homeDir .. els_unexpanded_dir
 require'lspconfig'.elixirls.setup{
-    -- Unix
-    cmd = { "~/elixirls/language_server.sh" };
+    cmd = { elixirLS_dir },
+    on_attach = on_attach,
+    flags = lsp_flags,
+    capabilities = capabilities,
 }
 
--- Tailwind
-require'lspconfig'.tailwindcss.setup{}
+require'lspconfig'.tailwindcss.setup {
+    init_options = {
+        userlanguages = {
+            elixir = "phoenix-heex",
+            heex = "phoenix-heex",
+            svelte = "html",
+        }
+    },
+    handlers = {
+        ["tailwindcss/getConfiguration"] = function(_, _, params, _, bufnr, _)
+            vim.lsp.buf_notify(bufnr, "tailwindcss/getConfigurationResponse", { _id = params._id})
+        end,
+    },
+    settings = {
+        includeLanguages = {
+            ["html-eex"] = "html",
+            ["phoenix-heex"] = "html",
+            heex = "html",
+            eelixir = "html",
+            elm = "html",
+            svelte = "html",
+        },
+        tailwindCSS = {
+            lint = {
+                cssConflict = "warning",
+                invalidApply = "error",
+                invalidConfigPath = "error",
+                invalidScreen = "error",
+                invalidTailwindDirective = "error",
+                invalidVariant = "error",
+                recommendVariantOrder = "warning",
+            },
+            experimental = {
+                classRegex = {
+                    [[class= "([^"]*)]],
+                    [[class: "([^"]*)]],
+                    '~H""".*class="([^"]*)".*"""',
+                },
+            },
+            validate = true,
+        }
+    },
+    filetypes = {
+        "css",
+        "scss",
+        "sass",
+        "html",
+        "heex",
+        "elixir",
+        "javascript",
+        "svelte",
+    },
+    on_attach = on_attach,
+    flags = lsp_flags,
+    capabilities = capabilities,
+}
 
 -- Docker
 require'lspconfig'.dockerls.setup{}
