@@ -51,28 +51,82 @@ require('lspconfig')['pyright'].setup{
     capabilities = capabilities,
     flags = lsp_flags,
 }
-require('lspconfig')['elixirls'].setup{
-    cmd = { "/home/jde/elixir-ls/language_server.sh" },
-    on_attach = on_attach,
-    capabilities = capabilities
+
+-- Lua
+require'lspconfig'.sumneko_lua.setup {
+  settings = {
+    Lua = {
+      runtime = {
+        -- Tell the language server which version of Lua you're using (most likely LuaJIT in the case of Neovim)
+        version = 'LuaJIT',
+      },
+      diagnostics = {
+        -- Get the language server to recognize the `vim` global
+        globals = {'vim'},
+      },
+      workspace = {
+        -- Make the server aware of Neovim runtime files
+        library = vim.api.nvim_get_runtime_file("", true),
+      },
+      -- Do not send telemetry data containing a randomized but unique identifier
+      telemetry = {
+        enable = false,
+      },
+    },
+  },
 }
-require('lspconfig')['html'].setup{}
-require('lspconfig')['tailwindcss'].setup{}
-require('lspconfig')['cssls'].setup{
-    on_attach = on_attach,
-    capabilities = capabilities
+
+-- Emmet
+require'lspconfig'.emmet_ls.setup{}
+
+-- Eslint
+require'lspconfig'.eslint.setup{}
+
+-- HTML, CSS, JSON
+--Enable (broadcasting) snippet capability for completion
+local capabilities = vim.lsp.protocol.make_client_capabilities()
+capabilities.textDocument.completion.completionItem.snippetSupport = true
+
+require'lspconfig'.html.setup {
+  capabilities = capabilities,
 }
-require('lspconfig')['emmet_ls'].setup{
-    on_attach = on_attach,
-    capabilities = capabilities
+
+require'lspconfig'.cssls.setup {
+  capabilities = capabilities,
 }
-require('lspconfig')['tsserver'].setup{
-    on_attach = on_attach,
-    capabilities = capabilities
+
+require'lspconfig'.jsonls.setup {
+  capabilities = capabilities,
 }
-require('lspconfig')['sumneko_lua'].setup{
-    on_attach = on_attach,
-    capabilities = capabilities
+
+-- Elixir
+require'lspconfig'.elixirls.setup{
+    -- Unix
+    cmd = { "~/elixirls/language_server.sh" };
 }
+
+-- Tailwind
+require'lspconfig'.tailwindcss.setup{}
+
+-- Docker
+require'lspconfig'.dockerls.setup{}
+
+-- Markdown
+require'lspconfig'.marksman.setup{}
+
+-- Graphql
+require'lspconfig'.graphql.setup{}
+
+-- Typescript
+require'lspconfig'.tsserver.setup{}
+
+-- CSS Modules
+require'lspconfig'.cssmodules_ls.setup{}
+
+-- Grammarly
+require'lspconfig'.grammarly.setup{}
+
+
+
 
 
